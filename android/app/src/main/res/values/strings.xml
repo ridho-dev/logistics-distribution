@@ -3,4 +3,11 @@
     <string name="beranda">Beranda</string>
     <string name="proses">Proses</string>
     <string name="profil">Profil</string>
+    <string name="perlengkapan_kepala">Perlengkapan Kepala</string>
+    <string name="baret_hijau_tni_ad">Baret Hijau TNI AD</string>
+    <string name="_0">0</string>
+    <string name="baret_hijau_raider">Baret Hijau Raider</string>
+    <string name="kelambu_kepala">Kelambu Kepala</string>
+    <string name="jala_samaran_helm">Jala Samaran Helm</string>
+    <string name="baret_hitam_kavaleri">Baret Hitam Kavaleri</string>
 </resources>

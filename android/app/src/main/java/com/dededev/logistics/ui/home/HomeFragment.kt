@@ -16,6 +16,7 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 import android.content.ContentResolver
+import android.util.Log
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +27,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
+    private lateinit var studentList: MutableList<Student>
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -48,6 +50,7 @@ class HomeFragment : Fragment() {
             intent.addCategory(Intent.CATEGORY_OPENABLE)
             intent.type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             pickFileLauncher.launch(intent)
+            Log.d("TAG", "onCreateView: ButtonClicked")
         }
 
         val layoutManager = LinearLayoutManager(context)
@@ -57,21 +60,9 @@ class HomeFragment : Fragment() {
         binding.rvKepala.addItemDecoration(itemDecoration)
 
 
-        val studentList = listOf(
-            Student("Siswa 1", 80),
-            Student("Siswa 2", 90),
-            Student("Siswa 3", 75),
-            Student("Siswa 4", 85),
-            Student("Siswa 5", 95),
-            Student("Siswa 6", 70),
-            Student("Siswa 7", 88),
-            Student("Siswa 8", 92),
-            Student("Siswa 9", 78),
-            Student("Siswa 10", 83)
-        )
+        studentList = mutableListOf()
 
-        val adapter = AdapterKepala(studentList)
-        binding.rvKepala.adapter = adapter
+
 
         return root
     }
@@ -86,12 +77,25 @@ class HomeFragment : Fragment() {
                 }
             }
         }
+        Log.d("TAG", "onCreateView: file picked")
+
     }
 
     private fun readExcelData(fileUri: Uri) {
         try {
             val inputStream : InputStream? = context?.contentResolver?.openInputStream(fileUri)
             val workbook = WorkbookFactory.create(inputStream)
+            val sheet = workbook.getSheetAt(0)
+
+            for (rowIndex in 1 until sheet.lastRowNum + 1) {
+                val row = sheet.getRow(rowIndex)
+                val name = row.getCell(1)?.stringCellValue ?: ""
+                val score = row.getCell(4)?.numericCellValue ?: ""
+                studentList.add(Student(name, score.toString().toDouble()))
+            }
+
+            val adapter = AdapterKepala(studentList)
+            binding.rvKepala.adapter = adapter
 
             workbook.close()
             inputStream?.close()

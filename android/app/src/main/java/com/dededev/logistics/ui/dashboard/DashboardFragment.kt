@@ -8,10 +8,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentDashboardBinding
+import com.dededev.logistics.ui.ViewModelFactory
+import com.dededev.logistics.ui.home.HomeFragment
+import com.dededev.logistics.ui.home.HomeViewModel
 
 class DashboardFragment : Fragment() {
 
     private var _binding: FragmentDashboardBinding? = null
+    private lateinit var dashboardViewModel: DashboardViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -22,13 +26,17 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val dashboardViewModel =
-            ViewModelProvider(this).get(DashboardViewModel::class.java)
+        dashboardViewModel = obtainViewModel(this@DashboardFragment)
 
         _binding = FragmentDashboardBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         return root
+    }
+
+    private fun obtainViewModel(fragment: DashboardFragment): DashboardViewModel {
+        val factory = ViewModelFactory.getInstance(fragment.requireActivity().application)
+        return ViewModelProvider(fragment, factory)[DashboardViewModel::class.java]
     }
 
     override fun onDestroyView() {

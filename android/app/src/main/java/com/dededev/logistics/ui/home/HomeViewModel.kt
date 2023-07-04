@@ -1,13 +1,22 @@
 package com.dededev.logistics.ui.home
 
+import android.app.Application
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.dededev.logistics.database.Logistic
+import com.dededev.logistics.database.LogisticRepository
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(application: Application) : ViewModel() {
 
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is home Fragment"
+    private val mLogisticRepository: LogisticRepository = LogisticRepository(application)
+
+    fun insert(logistic: Logistic) {
+        mLogisticRepository.insert(logistic)
     }
-    val text: LiveData<String> = _text
+
+    fun update(logistic: Logistic) {
+        mLogisticRepository.update(logistic)
+    }
+
+    fun getAllLogistics(): LiveData<List<Logistic>> = mLogisticRepository.getAllLogistics()
 }

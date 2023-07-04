@@ -7,27 +7,24 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentHomeBinding
-import java.io.File
-import java.io.FileInputStream
 import java.io.InputStream
-import android.content.ContentResolver
 import android.util.Log
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.dededev.logistics.data.Student
-import com.dededev.logistics.data.adapter.AdapterKepala
+import com.dededev.logistics.database.Logistic
+import com.dededev.logistics.ui.ViewModelFactory
+import com.dededev.logistics.ui.adapter.AdapterKepala
 import org.apache.poi.ss.usermodel.WorkbookFactory
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-    private lateinit var studentList: MutableList<Student>
+    private lateinit var logisticList: MutableList<Logistic>
+    private lateinit var homeViewModel: HomeViewModel
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -38,8 +35,7 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        homeViewModel = obtainViewModel(this@HomeFragment)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
@@ -60,11 +56,21 @@ class HomeFragment : Fragment() {
         binding.rvKepala.addItemDecoration(itemDecoration)
 
 
-        studentList = mutableListOf()
+        logisticList = mutableListOf()
 
-
+        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+            logisticList.clear()
+            logisticList.addAll(it)
+        }
+        val adapter = AdapterKepala(logisticList, homeViewModel)
+        binding.rvKepala.adapter = adapter
 
         return root
+    }
+
+    private fun obtainViewModel(fragment: HomeFragment): HomeViewModel {
+        val factory = ViewModelFactory.getInstance(fragment.requireActivity().application)
+        return ViewModelProvider(fragment, factory)[HomeViewModel::class.java]
     }
 
     private val pickFileLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -87,21 +93,39 @@ class HomeFragment : Fragment() {
             val workbook = WorkbookFactory.create(inputStream)
             val sheet = workbook.getSheetAt(0)
 
+
             for (rowIndex in 1 until sheet.lastRowNum + 1) {
                 val row = sheet.getRow(rowIndex)
-                val name = row.getCell(1)?.stringCellValue ?: ""
-                val score = row.getCell(4)?.numericCellValue ?: ""
-                studentList.add(Student(name, score.toString().toDouble()))
+                val id = row.getCell(0)?.numericCellValue.toString().toDouble().toInt()
+                val namaBarang = row.getCell(1)?.stringCellValue ?: ""
+                val kategori = row.getCell(2)?.stringCellValue ?: ""
+                val wilayah = row.getCell(3)?.stringCellValue ?: ""
+                val stokAwalPusat = row.getCell(4)?.numericCellValue.toString().toDouble().toInt()
+                val stokAkhirPusat = row.getCell(5)?.numericCellValue.toString().toDouble().toInt()
+                val stokAwalDaerah = row.getCell(7)?.numericCellValue.toString().toDouble().toInt()
+                val stokAkhirDaerah = row.getCell(8)?.numericCellValue.toString().toDouble().toInt()
+                val prioritasKirim = row.getCell(10)?.numericCellValue.toString().toDouble().toInt()
+                val logistic = Logistic(
+                    id, namaBarang, kategori, wilayah, stokAwalPusat, stokAkhirPusat, stokAwalDaerah, stokAkhirDaerah, prioritasKirim
+                )
+                homeViewModel.insert(logistic)
             }
-
-            val adapter = AdapterKepala(studentList)
-            binding.rvKepala.adapter = adapter
-
             workbook.close()
             inputStream?.close()
         } catch (e: Exception) {
             e.printStackTrace()
+            Log.d("TAG", "catch: $e")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+            logisticList.clear()
+            logisticList.addAll(it)
+        }
+        val adapter = AdapterKepala(logisticList, homeViewModel)
+        binding.rvKepala.adapter = adapter
     }
 
     override fun onDestroyView() {

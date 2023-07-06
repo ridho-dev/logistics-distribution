@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.dededev.logistics.ui.dashboard.DashboardFragment"
+        android:name="com.dededev.logistics.ui.process.ProcessFragment"
         android:label="@string/proses"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_process" />
 
     <fragment
         android:id="@+id/navigation_notifications"

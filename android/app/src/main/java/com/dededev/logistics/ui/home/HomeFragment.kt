@@ -52,8 +52,8 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         binding.rvKepala.layoutManager = layoutManager
         binding.rvKepala.isNestedScrollingEnabled = false
-        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-        binding.rvKepala.addItemDecoration(itemDecoration)
+//        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
+//        binding.rvKepala.addItemDecoration(itemDecoration)
 
 
         logisticList = mutableListOf()

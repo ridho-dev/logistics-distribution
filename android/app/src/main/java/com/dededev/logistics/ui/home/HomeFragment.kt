@@ -42,7 +42,7 @@ class HomeFragment : Fragment() {
         "Tutup Kaki",
         "Tanda Pengenal",
         "Kap Dislap",
-        "Kap Lain-Lain",
+        "Kap Lain-lain",
         "Kapsat & Almount Kapsat"
     )
 
@@ -67,13 +67,12 @@ class HomeFragment : Fragment() {
         adapter = AdapterKepala(logisticList, homeViewModel)
         binding.rvKepala.adapter = adapter
 
-
-
         val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
         val autoCompleteTextView = binding.filledExposed
-        autoCompleteTextView.setAdapter(spinnerAdapter)
-        autoCompleteTextView.setSelection(0)
-        autoCompleteTextView.setText(type[0], false)
+        autoCompleteTextView.apply {
+            setAdapter(spinnerAdapter)
+            setSelection(0)
+        }
         autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
 
             val filteredList = when (autoCompleteTextView.text.toString()) {
@@ -108,9 +107,6 @@ class HomeFragment : Fragment() {
             selectedMenu = type[position]
             adapter.updateData(filteredList)
             binding.rvKepala.adapter = adapter
-
-            Toast.makeText(requireContext(), autoCompleteTextView.text.toString(), Toast.LENGTH_SHORT).show()
-
         }
 
         val btnPickFile = binding.btnImport
@@ -125,14 +121,6 @@ class HomeFragment : Fragment() {
         val layoutManager = LinearLayoutManager(context)
         layoutManager.isAutoMeasureEnabled = true
         binding.rvKepala.layoutManager = layoutManager
-
-//        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
-//        binding.rvKepala.addItemDecoration(itemDecoration)
-
-
-
-
-
 
         return root
     }
@@ -190,14 +178,14 @@ class HomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
 
-
         val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
         val autoCompleteTextView = binding.filledExposed
-        autoCompleteTextView.setAdapter(spinnerAdapter)
-        autoCompleteTextView.setSelection(type.indexOf(selectedMenu))
-        autoCompleteTextView.setText(selectedMenu, false)
-
-        val adapter = AdapterKepala(logisticList.filter { it.kategori == selectedMenu }, homeViewModel)
+        autoCompleteTextView.apply {
+            setAdapter(spinnerAdapter)
+            setSelection(type.indexOf(selectedMenu))
+            setText(selectedMenu, false)
+        }
+        adapter = AdapterKepala(logisticList.filter { it.kategori == selectedMenu }, homeViewModel)
         binding.rvKepala.adapter = adapter
     }
 

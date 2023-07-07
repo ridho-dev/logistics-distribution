@@ -184,7 +184,7 @@ class HomeFragment : Fragment() {
             setSelection(type.indexOf(selectedMenu))
             setText(selectedMenu, false)
         }
-        adapter = AdapterKepala(logisticList.filter { it.kategori == selectedMenu }, homeViewModel)
+        adapter = AdapterKepala(logisticList, homeViewModel)
         binding.rvKepala.adapter = adapter
     }
 }

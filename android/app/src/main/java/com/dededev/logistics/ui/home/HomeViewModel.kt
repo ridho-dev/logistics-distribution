@@ -1,6 +1,7 @@
 package com.dededev.logistics.ui.home
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.dededev.logistics.database.Logistic
@@ -19,4 +20,6 @@ class HomeViewModel(application: Application) : ViewModel() {
     }
 
     fun getAllLogistics(): LiveData<List<Logistic>> = mLogisticRepository.getAllLogistics()
+
+    fun getPerlengkapanKepala(): LiveData<List<Logistic>> = mLogisticRepository.getPerlengkapanKepala()
 }

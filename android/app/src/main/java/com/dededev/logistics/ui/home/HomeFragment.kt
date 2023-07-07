@@ -51,19 +51,21 @@ class HomeFragment : Fragment() {
 
         val layoutManager = LinearLayoutManager(context)
         binding.rvKepala.layoutManager = layoutManager
-        binding.rvKepala.isNestedScrollingEnabled = false
+
 //        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
 //        binding.rvKepala.addItemDecoration(itemDecoration)
 
 
         logisticList = mutableListOf()
 
-        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+        homeViewModel.getPerlengkapanKepala().observe(viewLifecycleOwner) {
             logisticList.clear()
             logisticList.addAll(it)
         }
         val adapter = AdapterKepala(logisticList, homeViewModel)
         binding.rvKepala.adapter = adapter
+
+
 
         return root
     }
@@ -120,10 +122,6 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
-            logisticList.clear()
-            logisticList.addAll(it)
-        }
         val adapter = AdapterKepala(logisticList, homeViewModel)
         binding.rvKepala.adapter = adapter
     }

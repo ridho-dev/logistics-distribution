@@ -13,8 +13,12 @@ import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentHomeBinding
 import java.io.InputStream
 import android.util.Log
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.dededev.logistics.R
 import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.ui.ViewModelFactory
 import com.dededev.logistics.ui.adapter.AdapterKepala
@@ -25,10 +29,24 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private lateinit var logisticList: MutableList<Logistic>
     private lateinit var homeViewModel: HomeViewModel
+    private lateinit var adapter: AdapterKepala
 
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+
+    private val type: List<String> = listOf(
+        "Semua",
+        "Perlengkapan Kepala",
+        "Tutup Badan",
+        "Tutup Kaki",
+        "Tanda Pengenal",
+        "Kap Dislap",
+        "Kap Lain-Lain",
+        "Kapsat & Almount Kapsat"
+    )
+
+    private var selectedMenu: String = type[0]
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +58,61 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        logisticList = mutableListOf()
+
+        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+            logisticList.clear()
+            logisticList.addAll(it)
+        }
+        adapter = AdapterKepala(logisticList, homeViewModel)
+        binding.rvKepala.adapter = adapter
+
+
+
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
+        val autoCompleteTextView = binding.filledExposed
+        autoCompleteTextView.setAdapter(spinnerAdapter)
+        autoCompleteTextView.setSelection(0)
+        autoCompleteTextView.setText(type[0], false)
+        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+
+            val filteredList = when (autoCompleteTextView.text.toString()) {
+                type[0] -> {
+                    logisticList
+                }
+                type[1] -> {
+                    logisticList.filter { it.kategori == type[1] }
+                }
+                type[2] -> {
+                    logisticList.filter { it.kategori == type[2] }
+                }
+                type[3] -> {
+                    logisticList.filter { it.kategori == type[3] }
+                }
+                type[4] -> {
+                    logisticList.filter { it.kategori == type[4] }
+                }
+                type[5] -> {
+                    logisticList.filter { it.kategori == type[5] }
+                }
+                type[6] -> {
+                    logisticList.filter { it.kategori == type[6] }
+                }
+                type[7] -> {
+                    logisticList.filter { it.kategori == type[7] }
+                }
+                else -> {
+                    logisticList
+                }
+            }
+            selectedMenu = type[position]
+            adapter.updateData(filteredList)
+            binding.rvKepala.adapter = adapter
+
+            Toast.makeText(requireContext(), autoCompleteTextView.text.toString(), Toast.LENGTH_SHORT).show()
+
+        }
+
         val btnPickFile = binding.btnImport
         btnPickFile.setOnClickListener {
             val intent =  Intent(Intent.ACTION_OPEN_DOCUMENT)
@@ -50,20 +123,14 @@ class HomeFragment : Fragment() {
         }
 
         val layoutManager = LinearLayoutManager(context)
+        layoutManager.isAutoMeasureEnabled = true
         binding.rvKepala.layoutManager = layoutManager
 
 //        val itemDecoration = DividerItemDecoration(context, layoutManager.orientation)
 //        binding.rvKepala.addItemDecoration(itemDecoration)
 
 
-        logisticList = mutableListOf()
 
-        homeViewModel.getPerlengkapanKepala().observe(viewLifecycleOwner) {
-            logisticList.clear()
-            logisticList.addAll(it)
-        }
-        val adapter = AdapterKepala(logisticList, homeViewModel)
-        binding.rvKepala.adapter = adapter
 
 
 
@@ -122,12 +189,19 @@ class HomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        val adapter = AdapterKepala(logisticList, homeViewModel)
+
+
+        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
+        val autoCompleteTextView = binding.filledExposed
+        autoCompleteTextView.setAdapter(spinnerAdapter)
+        autoCompleteTextView.setSelection(type.indexOf(selectedMenu))
+        autoCompleteTextView.setText(selectedMenu, false)
+
+        val adapter = AdapterKepala(logisticList.filter { it.kategori == selectedMenu }, homeViewModel)
         binding.rvKepala.adapter = adapter
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
     }
 }

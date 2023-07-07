@@ -22,4 +22,6 @@ class HomeViewModel(application: Application) : ViewModel() {
     fun getAllLogistics(): LiveData<List<Logistic>> = mLogisticRepository.getAllLogistics()
 
     fun getPerlengkapanKepala(): LiveData<List<Logistic>> = mLogisticRepository.getPerlengkapanKepala()
+
+    fun getTutupBadan(): LiveData<List<Logistic>> = mLogisticRepository.getTutupBadan()
 }

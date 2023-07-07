@@ -13,10 +13,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentHomeBinding
 import java.io.InputStream
 import android.util.Log
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
-import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dededev.logistics.R
 import com.dededev.logistics.database.Logistic
@@ -31,8 +28,6 @@ class HomeFragment : Fragment() {
     private lateinit var homeViewModel: HomeViewModel
     private lateinit var adapter: AdapterKepala
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
 
     private val type: List<String> = listOf(
@@ -60,11 +55,19 @@ class HomeFragment : Fragment() {
 
         logisticList = mutableListOf()
 
-        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
-            logisticList.clear()
-            logisticList.addAll(it)
-        }
+        val layoutManager = LinearLayoutManager(context)
+        binding.rvKepala.layoutManager = layoutManager
+
         adapter = AdapterKepala(logisticList, homeViewModel)
+        homeViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+            if (logisticList.isEmpty()) {
+                logisticList.addAll(it)
+                adapter.updateData(logisticList)
+                adapter.notifyDataSetChanged()
+
+            }
+        }
+
         binding.rvKepala.adapter = adapter
 
         val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
@@ -73,7 +76,7 @@ class HomeFragment : Fragment() {
             setAdapter(spinnerAdapter)
             setSelection(0)
         }
-        autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
+        autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
 
             val filteredList = when (autoCompleteTextView.text.toString()) {
                 type[0] -> {
@@ -117,10 +120,6 @@ class HomeFragment : Fragment() {
             pickFileLauncher.launch(intent)
             Log.d("TAG", "onCreateView: ButtonClicked")
         }
-
-        val layoutManager = LinearLayoutManager(context)
-        layoutManager.isAutoMeasureEnabled = true
-        binding.rvKepala.layoutManager = layoutManager
 
         return root
     }
@@ -187,9 +186,5 @@ class HomeFragment : Fragment() {
         }
         adapter = AdapterKepala(logisticList.filter { it.kategori == selectedMenu }, homeViewModel)
         binding.rvKepala.adapter = adapter
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 }

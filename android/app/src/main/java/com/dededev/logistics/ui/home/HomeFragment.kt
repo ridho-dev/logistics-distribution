@@ -168,6 +168,7 @@ class HomeFragment : Fragment() {
                 logistic = predict(logistic)
                 homeViewModel.insert(logistic)
             }
+            if (logisticList.isNotEmpty()) logisticList.clear()
             workbook.close()
             inputStream?.close()
         } catch (e: Exception) {

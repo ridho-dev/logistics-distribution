@@ -11,4 +11,6 @@
     <string name="jala_samaran_helm">Jala Samaran Helm</string>
     <string name="baret_hitam_kavaleri">Baret Hitam Kavaleri</string>
     <string name="import_excel">Import Excel</string>
+    <string name="mulai_proses">Mulai pemilihan barang yang akan dikirim otomatis:</string>
+    <string name="konfirmasi_proses">Konfirmasi pemindahan barang sebanyak jumlah berikut?</string>
 </resources>

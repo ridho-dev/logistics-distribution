@@ -19,6 +19,7 @@ import com.dededev.logistics.R
 import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.ui.ViewModelFactory
 import com.dededev.logistics.ui.adapter.AdapterKepala
+import com.dededev.logistics.utils.predict
 import org.apache.poi.ss.usermodel.WorkbookFactory
 
 class HomeFragment : Fragment() {
@@ -161,9 +162,10 @@ class HomeFragment : Fragment() {
                 val stokAwalDaerah = row.getCell(7)?.numericCellValue.toString().toDouble().toInt()
                 val stokAkhirDaerah = row.getCell(8)?.numericCellValue.toString().toDouble().toInt()
                 val prioritasKirim = row.getCell(10)?.numericCellValue.toString().toDouble().toInt()
-                val logistic = Logistic(
+                var logistic = Logistic(
                     id, namaBarang, kategori, wilayah, stokAwalPusat, stokAkhirPusat, stokAwalDaerah, stokAkhirDaerah, prioritasKirim
                 )
+                logistic = predict(logistic)
                 homeViewModel.insert(logistic)
             }
             workbook.close()
@@ -186,5 +188,10 @@ class HomeFragment : Fragment() {
         }
         adapter = AdapterKepala(logisticList, homeViewModel)
         binding.rvKepala.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="com.dededev.logistics.ui.home.HomeFragment"
+        android:name="com.dededev.logistics.uiAdmin.home.HomeFragment"
         android:label="@string/beranda"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.dededev.logistics.ui.process.ProcessFragment"
+        android:name="com.dededev.logistics.uiAdmin.process.ProcessFragment"
         android:label="@string/proses"
         tools:layout="@layout/fragment_process" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.dededev.logistics.ui.notifications.NotificationsFragment"
+        android:name="com.dededev.logistics.uiAdmin.profile.ProfileFragment"
         android:label="@string/profil"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_profile" />
 </navigation>

@@ -3,15 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/drawable/ic_baseline_add_24.xml" value="0.1005" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/activity_login.xml" value="0.17074275362318841" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/activity_main.xml" value="0.17074275362318841" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/activity_main_non_admin.xml" value="0.20193637621023514" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/dropdown_item.xml" value="0.11666666666666667" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_dashboard.xml" value="0.25" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_home.xml" value="0.2" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_home_daerah.xml" value="0.15416666666666667" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_home_pusat.xml" value="0.153125" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_notifications.xml" value="0.17074275362318841" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_process.xml" value="0.22" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/fragment_profile.xml" value="0.15715579710144928" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/items.xml" value="0.25" />
-        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/items_not_editable.xml" value="0.17074275362318841" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/layout/items_not_editable.xml" value="0.5" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/menu/admin_menu.xml" value="0.20885416666666667" />
         <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/menu/bottom_nav_menu.xml" value="0.22447916666666667" />
+        <entry key="..\:/Projects - External/C5.0/Programs/Logistics/android/app/src/main/res/menu/menu.xml" value="0.20885416666666667" />
       </map>
     </option>
   </component>

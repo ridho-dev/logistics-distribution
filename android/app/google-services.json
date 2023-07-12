@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "822529245031",
+    "project_id": "logistics-cac64",
+    "storage_bucket": "logistics-cac64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:822529245031:android:2ce9017d32627b2eba39c2",
+        "android_client_info": {
+          "package_name": "com.dededev.logistics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "822529245031-l5hu0v1d6s77uvgtbh588rovhe2mtgd1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAiWITIWYKKyrMZ8L7Cpzvk69V_pQk9LK0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "822529245031-l5hu0v1d6s77uvgtbh588rovhe2mtgd1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -32,7 +32,7 @@ class NonAdminAdapter(
 
         fun bind(logistic: Logistic) {
             itemName.text = logistic.namaBarang
-            itemValue.text = logistic.stokAkhirPusat.toString()
+            itemValue.text = logistic.stokAkhir.toString()
         }
     }
 }

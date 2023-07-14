@@ -9,6 +9,8 @@ import com.dededev.logistics.database.LogisticRepository
 class HomePusatViewModel(application: Application) : ViewModel() {
     private val mLogisticRepository: LogisticRepository = LogisticRepository(application)
 
+    var selectedMenu :String = ""
+
     fun insert(logistic: Logistic) {
         mLogisticRepository.insert(logistic)
     }
@@ -19,5 +21,8 @@ class HomePusatViewModel(application: Application) : ViewModel() {
 
     fun getAllLogistics(): LiveData<List<Logistic>> {
         return mLogisticRepository.getAllLogistics()
+    }
+    fun getLogisticPusat(): LiveData<List<Logistic>> {
+        return mLogisticRepository.getLogisticPusat()
     }
 }

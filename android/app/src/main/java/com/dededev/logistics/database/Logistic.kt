@@ -22,17 +22,14 @@ data class Logistic (
     @ColumnInfo(name = "wilayah")
     var wilayah: String? = null,
 
-    @ColumnInfo(name = "stok_awal_pusat")
-    var stokAwalPusat: Int = 0,
+    @ColumnInfo(name = "stok_awal")
+    var stokAwal: Int = 0,
 
-    @ColumnInfo(name = "stok_akhir_pusat")
-    var stokAkhirPusat: Int = 0,
+    @ColumnInfo(name = "stok_akhir")
+    var stokAkhir: Int = 0,
 
-    @ColumnInfo(name = "stok_awal_daerah")
-    var stokAwalDaerah: Int = 0,
-
-    @ColumnInfo(name = "stok_akhir_daerah")
-    var stokAkhirDaerah: Int = 0,
+    @ColumnInfo(name = "kondisi")
+    var kondisi: String? = null,
 
     @ColumnInfo(name = "prioritas_kirim")
     var prioritasKirim: Int = 0,

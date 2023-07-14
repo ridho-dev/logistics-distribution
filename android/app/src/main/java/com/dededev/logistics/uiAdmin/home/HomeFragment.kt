@@ -13,6 +13,7 @@ import com.dededev.logistics.R
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.home.daerah.HomeDaerahFragment
 import com.dededev.logistics.uiAdmin.home.pusat.HomePusatFragment
+import com.google.firebase.firestore.FirebaseFirestore
 
 class HomeFragment : Fragment() {
 
@@ -57,7 +58,8 @@ class HomeFragment : Fragment() {
                     setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
                 }
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_pusat, fragmentPusat)
+                    .show(fragmentPusat)
+                    .hide(fragmentDaerah)
                     .commit()
                 isFragmentPusatVisible = true
                 homeViewModel.isPusatActive = true
@@ -75,7 +77,8 @@ class HomeFragment : Fragment() {
                     setTextColor(ContextCompat.getColor(requireContext(), R.color.main_blue))
                 }
                 childFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container_pusat, fragmentDaerah)
+                    .show(fragmentDaerah)
+                    .hide(fragmentPusat)
                     .commit()
                 isFragmentPusatVisible = false
                 homeViewModel.isPusatActive = false
@@ -97,7 +100,9 @@ class HomeFragment : Fragment() {
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.gray))
             }
             childFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_pusat, fragmentPusat)
+                .add(R.id.fragment_container_pusat, fragmentPusat)
+                .add(R.id.fragment_container_daerah, fragmentDaerah)
+                .hide(fragmentDaerah)
                 .commit()
         } else {
             buttonPusat.apply {
@@ -109,7 +114,9 @@ class HomeFragment : Fragment() {
                 setTextColor(ContextCompat.getColor(requireContext(), R.color.main_blue))
             }
             childFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_pusat, fragmentDaerah)
+                .add(R.id.fragment_container_pusat, fragmentDaerah)
+                .add(R.id.fragment_container_pusat, fragmentPusat)
+                .hide(fragmentPusat)
                 .commit()
         }
     }

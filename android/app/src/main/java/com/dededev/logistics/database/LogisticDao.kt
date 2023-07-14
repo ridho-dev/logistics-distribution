@@ -14,6 +14,9 @@ interface LogisticDao {
     @Query("SELECT * FROM logistic")
     fun getAllLogistic(): LiveData<List<Logistic>>
 
+    @Query("SELECT * FROM logistic WHERE wilayah='Pusat'")
+    fun getLogisticPusat(): LiveData<List<Logistic>>
+
     @Query("SELECT * FROM logistic WHERE kategori='Perlengkapan Kepala'")
     fun getPerlengkapanKepala(): LiveData<List<Logistic>>
 

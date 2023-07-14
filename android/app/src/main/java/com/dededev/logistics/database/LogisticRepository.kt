@@ -16,6 +16,8 @@ class LogisticRepository(application: Application) {
 
     fun getAllLogistics(): LiveData<List<Logistic>> = mLogisticDao.getAllLogistic()
 
+    fun getLogisticPusat(): LiveData<List<Logistic>> = mLogisticDao.getLogisticPusat()
+
     fun getPerlengkapanKepala(): LiveData<List<Logistic>> = mLogisticDao.getPerlengkapanKepala()
 
     fun getProcessedLogistics(): LiveData<List<Logistic>> = mLogisticDao.getProcessedLogistic()

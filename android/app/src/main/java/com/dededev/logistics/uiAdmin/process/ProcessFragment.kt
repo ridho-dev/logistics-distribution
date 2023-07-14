@@ -13,7 +13,7 @@ import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.databinding.FragmentProcessBinding
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.adapter.ProcessAdapter
-import com.dededev.logistics.utils.predict
+//import com.dededev.logistics.utils.predict
 
 class ProcessFragment : Fragment() {
 
@@ -91,17 +91,17 @@ class ProcessFragment : Fragment() {
 
         }
 
-        binding.btnConfirmYes.setOnClickListener {
-            for (logistic in processedList) {
-                logistic.stokAkhirDaerah = calculateDaerah(logistic.stokAkhirPusat, logistic.stokAkhirDaerah)
-                logistic.stokAkhirPusat = calculatePusat(logistic.stokAkhirPusat)
-
-                Log.d("TAG", "displayProcessedView: ${logistic.namaBarang}; ${logistic.stokAkhirPusat};${logistic.stokAkhirDaerah};")
-                processViewModel.update(predict(logistic))
-            }
-            processViewModel.setProcessedAlready(false)
-            processViewModel.getProcessedLogistics().removeObservers(viewLifecycleOwner)
-        }
+//        binding.btnConfirmYes.setOnClickListener {
+//            for (logistic in processedList) {
+//                logistic.stokAkhirDaerah = calculateDaerah(logistic.stokAkhirPusat, logistic.stokAkhirDaerah)
+//                logistic.stokAkhirPusat = calculatePusat(logistic.stokAkhirPusat)
+//
+//                Log.d("TAG", "displayProcessedView: ${logistic.namaBarang}; ${logistic.stokAkhirPusat};${logistic.stokAkhirDaerah};")
+//                processViewModel.update(predict(logistic))
+//            }
+//            processViewModel.setProcessedAlready(false)
+//            processViewModel.getProcessedLogistics().removeObservers(viewLifecycleOwner)
+//        }
     }
 
     private fun calculatePusat(stokPusat: Int): Int {

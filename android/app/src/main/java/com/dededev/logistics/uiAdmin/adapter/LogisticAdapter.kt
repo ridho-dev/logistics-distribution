@@ -51,7 +51,7 @@ class LogisticAdapter (
                 override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                     val item = currentItem ?: return
                     val updatedValue = p0?.toString() ?: ""
-                    item.stokAkhirPusat = updatedValue.toInt()
+                    item.stokAkhir = updatedValue.toInt()
                     homePusatViewModel.update(item)
                 }
 
@@ -61,7 +61,7 @@ class LogisticAdapter (
         fun bind(logistic: Logistic) {
             currentItem = logistic
             textName.text = logistic.namaBarang
-            textScore.text = logistic.stokAkhirPusat.toString()
+            textScore.text = logistic.stokAkhir.toString()
         }
     }
 

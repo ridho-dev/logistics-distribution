@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dededev.logistics.R
@@ -16,7 +17,7 @@ import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.databinding.FragmentHomePusatBinding
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.adapter.LogisticAdapter
-import com.dededev.logistics.utils.predict
+import com.dededev.logistics.utils.LogisticCondition
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import java.io.InputStream
 
@@ -39,8 +40,6 @@ class HomePusatFragment : Fragment() {
         "Kapsat & Almount Kapsat"
     )
 
-    private var selectedMenu: String = type[0]
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,7 +55,7 @@ class HomePusatFragment : Fragment() {
         binding.rvKepala.layoutManager = layoutManager
 
         adapter = LogisticAdapter(logisticList, homePusatViewModel)
-        homePusatViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+        homePusatViewModel.getLogisticPusat().observe(viewLifecycleOwner) {
             if (logisticList.isEmpty()) {
                 logisticList.addAll(it)
                 adapter.updateData(logisticList)
@@ -74,41 +73,48 @@ class HomePusatFragment : Fragment() {
         }
         autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
 
-            val filteredList = when (autoCompleteTextView.text.toString()) {
-                type[0] -> {
-                    logisticList
-                }
-                type[1] -> {
-                    logisticList.filter { it.kategori == type[1] }
-                }
-                type[2] -> {
-                    logisticList.filter { it.kategori == type[2] }
-                }
-                type[3] -> {
-                    logisticList.filter { it.kategori == type[3] }
-                }
-                type[4] -> {
-                    logisticList.filter { it.kategori == type[4] }
-                }
-                type[5] -> {
-                    logisticList.filter { it.kategori == type[5] }
-                }
-                type[6] -> {
-                    logisticList.filter { it.kategori == type[6] }
-                }
-                type[7] -> {
-                    logisticList.filter { it.kategori == type[7] }
-                }
-                else -> {
-                    logisticList
-                }
-            }
-            selectedMenu = type[position]
+            val filteredList = filterList(autoCompleteTextView.text.toString())
+
+            homePusatViewModel.selectedMenu = type[position]
+            Log.d("TAG", "onCreateView: ${homePusatViewModel.selectedMenu}")
             adapter.updateData(filteredList)
             binding.rvKepala.adapter = adapter
         }
         return binding.root
     }
+
+    fun filterList(menuType: String): List<Logistic> {
+        return when (menuType) {
+            type[0] -> {
+                logisticList
+            }
+            type[1] -> {
+                logisticList.filter { it.kategori == type[1] }
+            }
+            type[2] -> {
+                logisticList.filter { it.kategori == type[2] }
+            }
+            type[3] -> {
+                logisticList.filter { it.kategori == type[3] }
+            }
+            type[4] -> {
+                logisticList.filter { it.kategori == type[4] }
+            }
+            type[5] -> {
+                logisticList.filter { it.kategori == type[5] }
+            }
+            type[6] -> {
+                logisticList.filter { it.kategori == type[6] }
+            }
+            type[7] -> {
+                logisticList.filter { it.kategori == type[7] }
+            }
+            else -> {
+                logisticList
+            }
+        }
+    }
+
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.admin_menu, menu)
@@ -156,15 +162,12 @@ class HomePusatFragment : Fragment() {
                 val namaBarang = row.getCell(1)?.stringCellValue ?: ""
                 val kategori = row.getCell(2)?.stringCellValue ?: ""
                 val wilayah = row.getCell(3)?.stringCellValue ?: ""
-                val stokAwalPusat = row.getCell(4)?.numericCellValue.toString().toDouble().toInt()
-                val stokAkhirPusat = row.getCell(5)?.numericCellValue.toString().toDouble().toInt()
-                val stokAwalDaerah = row.getCell(7)?.numericCellValue.toString().toDouble().toInt()
-                val stokAkhirDaerah = row.getCell(8)?.numericCellValue.toString().toDouble().toInt()
-                val prioritasKirim = row.getCell(10)?.numericCellValue.toString().toDouble().toInt()
+                val stokAwal = row.getCell(4)?.numericCellValue.toString().toDouble().toInt()
+                val stokAkhir = row.getCell(5)?.numericCellValue.toString().toDouble().toInt()
                 var logistic = Logistic(
-                    id, namaBarang, kategori, wilayah, stokAwalPusat, stokAkhirPusat, stokAwalDaerah, stokAkhirDaerah, prioritasKirim
+                    id, namaBarang, kategori, wilayah, stokAwal, stokAkhir
                 )
-                logistic = predict(logistic)
+                logistic = LogisticCondition(logistic)
                 homePusatViewModel.insert(logistic)
             }
             if (logisticList.isNotEmpty()) logisticList.clear()
@@ -174,20 +177,6 @@ class HomePusatFragment : Fragment() {
             e.printStackTrace()
             Log.d("TAG", "catch: $e")
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-//
-//        val spinnerAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, type)
-//        val autoCompleteTextView = binding.filledExposed
-//        autoCompleteTextView.apply {
-//            setAdapter(spinnerAdapter)
-//            setSelection(type.indexOf(selectedMenu))
-//            setText(selectedMenu, false)
-//        }
-//        adapter = LogisticAdapter(logisticList, homePusatViewModel)
-//        binding.rvKepala.adapter = adapter
     }
 
     override fun onDestroy() {

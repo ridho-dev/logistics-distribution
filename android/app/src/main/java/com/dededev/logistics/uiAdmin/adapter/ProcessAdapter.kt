@@ -32,7 +32,7 @@ class ProcessAdapter(
 
         fun bind(logistic: Logistic) {
             itemName.text = logistic.namaBarang
-            itemValue.text = (floor(logistic.stokAkhirPusat * 0.1).toInt()).toString()
+            itemValue.text = (floor(logistic.stokAkhir * 0.1).toInt()).toString()
         }
     }
 }

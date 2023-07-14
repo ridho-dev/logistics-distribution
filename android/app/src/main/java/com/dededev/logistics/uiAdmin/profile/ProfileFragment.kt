@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentProfileBinding
 import com.dededev.logistics.uiAdmin.login.LoginActivity
 import com.dededev.logistics.utils.SessionManager
@@ -25,9 +24,6 @@ class ProfileFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
-
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
@@ -38,6 +34,7 @@ class ProfileFragment : Fragment() {
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
         }
+
         return root
     }
 

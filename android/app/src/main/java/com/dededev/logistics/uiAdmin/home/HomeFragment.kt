@@ -1,6 +1,7 @@
 package com.dededev.logistics.uiAdmin.home
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.dededev.logistics.databinding.FragmentHomeBinding
@@ -128,6 +129,12 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.d("TAG", "onDestroyView: Home")
+        childFragmentManager.beginTransaction().apply {
+            remove(fragmentPusat)
+            remove(fragmentDaerah)
+            commitAllowingStateLoss()
+        }
         _binding = null
     }
 }

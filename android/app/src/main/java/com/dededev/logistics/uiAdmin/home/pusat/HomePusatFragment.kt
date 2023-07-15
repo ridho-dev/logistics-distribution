@@ -9,8 +9,8 @@ import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.dededev.logistics.R
 import com.dededev.logistics.database.Logistic
@@ -69,14 +69,13 @@ class HomePusatFragment : Fragment() {
         val autoCompleteTextView = binding.filledExposed
         autoCompleteTextView.apply {
             setAdapter(spinnerAdapter)
-            setSelection(0)
+            setText(homePusatViewModel.selectedMenu, false)
         }
         autoCompleteTextView.setOnItemClickListener { _, _, position, _ ->
 
             val filteredList = filterList(autoCompleteTextView.text.toString())
 
             homePusatViewModel.selectedMenu = type[position]
-            Log.d("TAG", "onCreateView: ${homePusatViewModel.selectedMenu}")
             adapter.updateData(filteredList)
             binding.rvKepala.adapter = adapter
         }

@@ -14,6 +14,9 @@ interface LogisticDao {
     @Query("SELECT * FROM logistic")
     fun getAllLogistic(): LiveData<List<Logistic>>
 
+    @Query("SELECT * FROM logistic")
+    fun getList(): List<Logistic>
+
     @Query("SELECT * FROM logistic WHERE wilayah='Pusat'")
     fun getLogisticPusat(): LiveData<List<Logistic>>
 
@@ -25,4 +28,7 @@ interface LogisticDao {
 
     @Query("SELECT * FROM logistic WHERE prioritas_kirim = 1")
     fun getProcessedLogistic(): LiveData<List<Logistic>>
+
+    @Query("SELECT * FROM logistic WHERE wilayah=:wilayah")
+    fun getLogisticPerRegion(wilayah: String): LiveData<List<Logistic>>
 }

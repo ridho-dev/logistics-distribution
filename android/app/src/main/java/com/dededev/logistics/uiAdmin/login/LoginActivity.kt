@@ -3,6 +3,7 @@ package com.dededev.logistics.uiAdmin.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.dededev.logistics.MainActivity
 import com.dededev.logistics.database.user.User
@@ -27,10 +28,13 @@ class LoginActivity : AppCompatActivity() {
         db = FirebaseFirestore.getInstance()
         pref = SessionManager(this)
 
+        Log.d("TAG", "onCreate: ${pref.getJabatan()}")
+
+
         if (pref.isLoggedIn() && pref.getJabatan() == "admin") {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-        } else if (pref.isLoggedIn() && pref.getJabatan() == "nonadmin") {
+        } else if (pref.isLoggedIn() && pref.getJabatan() == "Kepala Gudang") {
             val intent = Intent(this, MainActivityNonAdmin::class.java)
             startActivity(intent)
         } else {
@@ -50,10 +54,16 @@ class LoginActivity : AppCompatActivity() {
                                     if (documentTask.isSuccessful) {
                                         val user = documentTask.result?.toObject(User::class.java)
                                         val jabatan = user?.jabatan
-                                        if (jabatan != null) {
-                                            pref.setLoggedIn(true, jabatan)
-                                            val intent = Intent(this, MainActivity::class.java)
-                                            startActivity(intent)
+                                        val lokasi = user?.lokasi
+                                        if (jabatan != null && lokasi != null) {
+                                            pref.setLoggedIn(true, jabatan, lokasi)
+                                            if (jabatan == "admin") {
+                                                val intent = Intent(this, MainActivity::class.java)
+                                                startActivity(intent)
+                                            } else {
+                                                val intent = Intent(this, MainActivityNonAdmin::class.java)
+                                                startActivity(intent)
+                                            }
                                         }
                                     }
                                     else {

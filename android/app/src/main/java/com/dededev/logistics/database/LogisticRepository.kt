@@ -16,13 +16,13 @@ class LogisticRepository(application: Application) {
 
     fun getAllLogistics(): LiveData<List<Logistic>> = mLogisticDao.getAllLogistic()
 
-    fun getLogisticPusat(): LiveData<List<Logistic>> = mLogisticDao.getLogisticPusat()
+    fun getList(): List<Logistic> = mLogisticDao.getList()
 
-    fun getPerlengkapanKepala(): LiveData<List<Logistic>> = mLogisticDao.getPerlengkapanKepala()
+    fun getLogisticPusat(): LiveData<List<Logistic>> = mLogisticDao.getLogisticPusat()
 
     fun getProcessedLogistics(): LiveData<List<Logistic>> = mLogisticDao.getProcessedLogistic()
 
-    fun getTutupBadan(): LiveData<List<Logistic>> = mLogisticDao.getTutupBadan()
+    fun getLogisticPerRegion(wilayah: String): LiveData<List<Logistic>> = mLogisticDao.getLogisticPerRegion(wilayah)
 
     fun update(logistic: Logistic) {
         executorService.execute { mLogisticDao.update(logistic) }

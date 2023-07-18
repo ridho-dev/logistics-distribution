@@ -25,6 +25,7 @@ class MainActivityNonAdmin : AppCompatActivity() {
     private lateinit var nonAdminViewModel: NonAdminViewModel
     private lateinit var logisticList: MutableList<Logistic>
     private lateinit var pref: SessionManager
+    private lateinit var adapter: NonAdminAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +39,7 @@ class MainActivityNonAdmin : AppCompatActivity() {
         val factory = ViewModelFactory.getInstance(application)
         nonAdminViewModel = ViewModelProvider(this, factory)[NonAdminViewModel::class.java]
 
+        adapter = NonAdminAdapter(logisticList, nonAdminViewModel)
         displayProcessedView()
     }
     private fun displayProcessedView() {
@@ -58,50 +60,58 @@ class MainActivityNonAdmin : AppCompatActivity() {
             rvProcessedKapsat.isNestedScrollingEnabled = false
         }
 
-        nonAdminViewModel.getAllLogistics().observe(this) {
-            logisticList.addAll(it)
-            Log.d("TAG", "displayProcessedView: $logisticList")
-            val dataKepala = it.filter { item -> item.kategori == "Perlengkapan Kepala" }
-            if (dataKepala.isNotEmpty()) {
-                binding.tvProcessKepala.visibility = View.VISIBLE
-                binding.rvProcessedKepala.adapter = NonAdminAdapter(dataKepala)
-            }
+        nonAdminViewModel.getLogisticPerRegion(pref.getLokasi().toString()).observe(this) {
+            if (logisticList.isEmpty()) {
+                logisticList.addAll(it)
+                adapter.updateData(logisticList)
+                adapter.notifyDataSetChanged()
+                filter()
 
-            val dataBadan = it.filter { item -> item.kategori == "Tutup Badan" }
-            if (dataBadan.isNotEmpty()) {
-                binding.tvProcessBadan.visibility = View.VISIBLE
-                binding.rvProcessedBadan.adapter = NonAdminAdapter(dataBadan)
             }
+        }
+    }
 
-            val dataKaki = it.filter { item -> item.kategori == "Tutup Kaki" }
-            if (dataKaki.isNotEmpty()) {
-                binding.tvProcessKaki.visibility = View.VISIBLE
-                binding.rvProcessedKaki.adapter = NonAdminAdapter(dataKaki)
-            }
+    fun filter() {
+        val dataKepala = logisticList.filter { item -> item.kategori == "Perlengkapan Kepala" }
+        if (dataKepala.isNotEmpty()) {
+            binding.tvProcessKepala.visibility = View.VISIBLE
+            binding.rvProcessedKepala.adapter = NonAdminAdapter(dataKepala, nonAdminViewModel)
+        }
 
-            val dataPengenal = it.filter { item -> item.kategori == "Tanda Pengenal" }
-            if (dataPengenal.isNotEmpty()) {
-                binding.tvProcessPengenal.visibility = View.VISIBLE
-                binding.rvProcessedPengenal.adapter = NonAdminAdapter(dataPengenal)
-            }
+        val dataBadan = logisticList.filter { item -> item.kategori == "Tutup Badan" }
+        if (dataBadan.isNotEmpty()) {
+            binding.tvProcessBadan.visibility = View.VISIBLE
+            binding.rvProcessedBadan.adapter = NonAdminAdapter(dataBadan, nonAdminViewModel)
+        }
 
-            val dataKapDislap = it.filter { item -> item.kategori == "Kap Dislap" }
-            if (dataKapDislap.isNotEmpty()) {
-                binding.tvProcessKapdislap.visibility = View.VISIBLE
-                binding.rvProcessedKapdislap.adapter = NonAdminAdapter(dataKapDislap)
-            }
+        val dataKaki = logisticList.filter { item -> item.kategori == "Tutup Kaki" }
+        if (dataKaki.isNotEmpty()) {
+            binding.tvProcessKaki.visibility = View.VISIBLE
+            binding.rvProcessedKaki.adapter = NonAdminAdapter(dataKaki, nonAdminViewModel)
+        }
 
-            val dataKapLainLain = it.filter { item -> item.kategori == "Kap Lain-lain" }
-            if (dataKapLainLain.isNotEmpty()) {
-                binding.tvProcessKaplainlain.visibility = View.VISIBLE
-                binding.rvProcessedKaplainlain.adapter = NonAdminAdapter(dataKapLainLain)
-            }
+        val dataPengenal = logisticList.filter { item -> item.kategori == "Tanda Pengenal" }
+        if (dataPengenal.isNotEmpty()) {
+            binding.tvProcessPengenal.visibility = View.VISIBLE
+            binding.rvProcessedPengenal.adapter = NonAdminAdapter(dataPengenal, nonAdminViewModel)
+        }
 
-            val dataKapsat = it.filter { item -> item.kategori == "Kapsat & Almount Kapsat" }
-            if (dataKapsat.isNotEmpty()) {
-                binding.tvProcessKapsat.visibility = View.VISIBLE
-                binding.rvProcessedKapsat.adapter = NonAdminAdapter(dataKapsat)
-            }
+        val dataKapDislap = logisticList.filter { item -> item.kategori == "Kap Dislap" }
+        if (dataKapDislap.isNotEmpty()) {
+            binding.tvProcessKapdislap.visibility = View.VISIBLE
+            binding.rvProcessedKapdislap.adapter = NonAdminAdapter(dataKapDislap, nonAdminViewModel)
+        }
+
+        val dataKapLainLain = logisticList.filter { item -> item.kategori == "Kap Lain-lain" }
+        if (dataKapLainLain.isNotEmpty()) {
+            binding.tvProcessKaplainlain.visibility = View.VISIBLE
+            binding.rvProcessedKaplainlain.adapter = NonAdminAdapter(dataKapLainLain, nonAdminViewModel)
+        }
+
+        val dataKapsat = logisticList.filter { item -> item.kategori == "Kapsat & Almount Kapsat" }
+        if (dataKapsat.isNotEmpty()) {
+            binding.tvProcessKapsat.visibility = View.VISIBLE
+            binding.rvProcessedKapsat.adapter = NonAdminAdapter(dataKapsat, nonAdminViewModel)
         }
     }
 
@@ -113,7 +123,7 @@ class MainActivityNonAdmin : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_logout -> {
-                pref.setLoggedIn(false, "")
+                pref.setLoggedIn(false, "", "")
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 true

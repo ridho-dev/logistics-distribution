@@ -10,7 +10,11 @@ import com.dededev.logistics.database.LogisticRepository
 class NonAdminViewModel(application: Application): ViewModel() {
     private val mRepository = LogisticRepository(application)
 
-    fun getAllLogistics(): LiveData<List<Logistic>> {
-        return mRepository.getAllLogistics()
+    fun getLogisticPerRegion(wilayah: String): LiveData<List<Logistic>> {
+        return mRepository.getLogisticPerRegion(wilayah)
+    }
+
+    fun update(logistic: Logistic) {
+        mRepository.update(logistic)
     }
 }

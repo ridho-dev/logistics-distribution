@@ -75,7 +75,6 @@ class ProcessFragment : Fragment() {
         }
 
         binding.btnProcess.setOnClickListener {
-
             val processedPusat = allList.filter { item -> item.wilayah == "Pusat" }
             val processedWilayah = allList.filter { item -> item.wilayah == processViewModel.selectedRegion }
             for (i in processedPusat.indices) {
@@ -95,11 +94,17 @@ class ProcessFragment : Fragment() {
                     btnConfirmRestart.visibility = View.VISIBLE
                     btnConfirmYes.visibility = View.VISIBLE
                     binding.layoutProcessed.visibility = View.VISIBLE
+                    binding.linearLayoutChoosing.visibility = View.INVISIBLE
+                    binding.linearLayoutAfter.visibility = View.VISIBLE
+                    tvChoosenValue.text = processViewModel.selectedRegion
+                    choosenItemValue.text = (allList.filter { item -> item.wilayah == processViewModel.selectedRegion && item.prioritasKirim == 1 }).size.toString()
                 }
             } else {
                 binding.apply {
                     textView.text = getString(R.string.mulai_proses)
                     btnProcess.visibility = View.VISIBLE
+                    binding.linearLayoutAfter.visibility = View.INVISIBLE
+                    binding.linearLayoutChoosing.visibility = View.VISIBLE
                     btnConfirmRestart.visibility = View.INVISIBLE
                     btnConfirmYes.visibility = View.INVISIBLE
                     binding.layoutProcessed.visibility = View.INVISIBLE
@@ -252,6 +257,7 @@ class ProcessFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         spinnerProsesDaerah()
+        binding.choosenItemValue.text = (allList.filter { item -> item.wilayah == processViewModel.selectedRegion && item.prioritasKirim == 1 }).size.toString()
         processViewModel.processedAlready.observe(viewLifecycleOwner) {
             if (it == true) {
                 process()

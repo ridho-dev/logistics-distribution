@@ -1,10 +1,10 @@
 package com.dededev.logistics.uiAdmin.process
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,7 +13,8 @@ import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.databinding.FragmentProcessBinding
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.adapter.ProcessAdapter
-//import com.dededev.logistics.utils.predict
+import com.dededev.logistics.utils.predictPrioritas
+import kotlin.math.floor
 
 class ProcessFragment : Fragment() {
 
@@ -23,7 +24,14 @@ class ProcessFragment : Fragment() {
     // This property is only valid between onCreateView and
     // onDestroyView.
     private val binding get() = _binding!!
+    private lateinit var allList: MutableList<Logistic>
     private lateinit var processedList: MutableList<Logistic>
+
+    private val region: List<String> = listOf(
+        "Medan",
+        "Pematang Siantar",
+        "Sibolga",
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,8 +43,14 @@ class ProcessFragment : Fragment() {
         _binding = FragmentProcessBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
+        allList = mutableListOf()
         processedList = mutableListOf()
+        processViewModel.getAllLogistics().observe(viewLifecycleOwner) {
+            allList.clear()
+            allList.addAll(it)
+        }
 
+        spinnerProsesDaerah()
         displayProcessedView()
 
         return root
@@ -61,6 +75,14 @@ class ProcessFragment : Fragment() {
         }
 
         binding.btnProcess.setOnClickListener {
+
+            val processedPusat = allList.filter { item -> item.wilayah == "Pusat" }
+            val processedWilayah = allList.filter { item -> item.wilayah == processViewModel.selectedRegion }
+            for (i in processedPusat.indices) {
+                val pusatItem = processedPusat[i]
+                val wilayahItem = processedWilayah[i]
+                processViewModel.update(predictPrioritas(pusatItem, wilayahItem))
+            }
             process()
             processViewModel.setProcessedAlready(true)
         }
@@ -91,74 +113,136 @@ class ProcessFragment : Fragment() {
 
         }
 
-//        binding.btnConfirmYes.setOnClickListener {
-//            for (logistic in processedList) {
-//                logistic.stokAkhirDaerah = calculateDaerah(logistic.stokAkhirPusat, logistic.stokAkhirDaerah)
-//                logistic.stokAkhirPusat = calculatePusat(logistic.stokAkhirPusat)
-//
-//                Log.d("TAG", "displayProcessedView: ${logistic.namaBarang}; ${logistic.stokAkhirPusat};${logistic.stokAkhirDaerah};")
-//                processViewModel.update(predict(logistic))
-//            }
-//            processViewModel.setProcessedAlready(false)
-//            processViewModel.getProcessedLogistics().removeObservers(viewLifecycleOwner)
-//        }
+        binding.btnConfirmYes.setOnClickListener {
+
+            processViewModel.setProcessedAlready(false)
+            processViewModel.getProcessedLogistics().removeObservers(viewLifecycleOwner)
+            calculate()
+
+        }
     }
 
-    private fun calculatePusat(stokPusat: Int): Int {
-        return stokPusat - (stokPusat*0.1).toInt()
+    fun calculate() {
+        val chosenList = allList.filter { item -> item.wilayah == processViewModel.selectedRegion && item.prioritasKirim == 1 }
+        for (choosen in chosenList) {
+            val itemPusat = allList.find { item ->
+                item.wilayah == "Pusat" && item.namaBarang == choosen.namaBarang
+            }
+            val tenthPusat = itemPusat?.stokAkhir?.times(0.1)?.let { floor(it).toInt() }
+            itemPusat?.stokAkhir = itemPusat?.stokAkhir!! - tenthPusat!!
+            choosen.stokAkhir = choosen.stokAkhir + tenthPusat
+            processViewModel.update(itemPusat)
+            processViewModel.update(choosen)
+        }
     }
 
-    private fun calculateDaerah(stokPusat: Int, stokDaerah: Int): Int {
-        return stokDaerah + (stokPusat*0.1).toInt()
+    private fun spinnerProsesDaerah() {
+        val spinnerProsesAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_item, region)
+        val actvWilayah = binding.actvProsesWilayah
+        actvWilayah.apply {
+            setAdapter(spinnerProsesAdapter)
+            setText(processViewModel.selectedRegion, false)
+        }
+
+        actvWilayah.setOnItemClickListener { _, _, position, _ ->
+            processViewModel.selectedRegion = region[position]
+        }
     }
 
     private fun process() {
         processViewModel.getProcessedLogistics().observe(viewLifecycleOwner) {
-            processedList.addAll(it)
-            val dataKepala = it.filter { item -> item.kategori == "Perlengkapan Kepala" }
+            val dataKepala = it.filter { item -> item.kategori == "Perlengkapan Kepala" && item.wilayah == processViewModel.selectedRegion}
             if (dataKepala.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataKepala) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessKepala.visibility = View.VISIBLE
-                binding.rvProcessedKepala.adapter = ProcessAdapter(dataKepala)
+                binding.rvProcessedKepala.adapter = ProcessAdapter(data)
             }
 
-            val dataBadan = it.filter { item -> item.kategori == "Tutup Badan" }
+            val dataBadan = it.filter { item -> item.kategori == "Tutup Badan" && item.wilayah == processViewModel.selectedRegion }
             if (dataBadan.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataBadan) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessBadan.visibility = View.VISIBLE
-                binding.rvProcessedBadan.adapter = ProcessAdapter(dataBadan)
+                binding.rvProcessedBadan.adapter = ProcessAdapter(data)
             }
 
-            val dataKaki = it.filter { item -> item.kategori == "Tutup Kaki" }
+            val dataKaki = it.filter { item -> item.kategori == "Tutup Kaki" && item.wilayah == processViewModel.selectedRegion }
             if (dataKaki.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataKaki) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessKaki.visibility = View.VISIBLE
-                binding.rvProcessedKaki.adapter = ProcessAdapter(dataKaki)
+                binding.rvProcessedKaki.adapter = ProcessAdapter(data)
             }
 
-            val dataPengenal = it.filter { item -> item.kategori == "Tanda Pengenal" }
+            val dataPengenal = it.filter { item -> item.kategori == "Tanda Pengenal" && item.wilayah == processViewModel.selectedRegion }
             if (dataPengenal.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataPengenal) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessPengenal.visibility = View.VISIBLE
-                binding.rvProcessedPengenal.adapter = ProcessAdapter(dataPengenal)
+                binding.rvProcessedPengenal.adapter = ProcessAdapter(data)
             }
 
-            val dataKapDislap = it.filter { item -> item.kategori == "Kap Dislap" }
+            val dataKapDislap = it.filter { item -> item.kategori == "Kap Dislap" && item.wilayah == processViewModel.selectedRegion }
             if (dataKapDislap.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataKapDislap) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessKapdislap.visibility = View.VISIBLE
-                binding.rvProcessedKapdislap.adapter = ProcessAdapter(dataKapDislap)
+                binding.rvProcessedKapdislap.adapter = ProcessAdapter(data)
             }
 
-            val dataKapLainLain = it.filter { item -> item.kategori == "Kap Lain-lain" }
+            val dataKapLainLain = it.filter { item -> item.kategori == "Kap Lain-lain" && item.wilayah == processViewModel.selectedRegion }
             if (dataKapLainLain.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataKapLainLain) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessKaplainlain.visibility = View.VISIBLE
-                binding.rvProcessedKaplainlain.adapter = ProcessAdapter(dataKapLainLain)
+                binding.rvProcessedKaplainlain.adapter = ProcessAdapter(data)
             }
 
-            val dataKapsat = it.filter { item -> item.kategori == "Kapsat & Almount Kapsat" }
+            val dataKapsat = it.filter { item -> item.kategori == "Kapsat & Almount Kapsat" && item.wilayah == processViewModel.selectedRegion }
             if (dataKapsat.isNotEmpty()) {
+                val data = mutableListOf<Logistic>()
+                for (dataItem in dataKapsat) {
+                    val dataDiPusat = allList.find { item -> item.wilayah == "Pusat" && item.namaBarang == dataItem.namaBarang }
+                    if (dataDiPusat != null) {
+                        data.add(dataDiPusat)
+                    }
+                }
                 binding.tvProcessKapsat.visibility = View.VISIBLE
-                binding.rvProcessedKapsat.adapter = ProcessAdapter(dataKapsat)
+                binding.rvProcessedKapsat.adapter = ProcessAdapter(data)
             }
         }
     }
-
 
     private fun obtainViewModel(fragment: ProcessFragment): ProcessViewModel {
         val factory = ViewModelFactory.getInstance(fragment.requireActivity().application)
@@ -167,7 +251,12 @@ class ProcessFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        processViewModel.processedAlready.observe(viewLifecycleOwner) { if (it) process() }
+        spinnerProsesDaerah()
+        processViewModel.processedAlready.observe(viewLifecycleOwner) {
+            if (it == true) {
+                process()
+            }
+        }
     }
 
     override fun onDestroyView() {

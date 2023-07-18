@@ -18,6 +18,7 @@ import com.dededev.logistics.databinding.FragmentHomePusatBinding
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.adapter.LogisticAdapter
 import com.dededev.logistics.utils.LogisticCondition
+import com.dededev.logistics.utils.predictPrioritas
 import org.apache.poi.ss.usermodel.WorkbookFactory
 import java.io.InputStream
 
@@ -81,6 +82,9 @@ class HomePusatFragment : Fragment() {
         }
         return binding.root
     }
+
+
+
 
     fun filterList(menuType: String): List<Logistic> {
         return when (menuType) {

@@ -10,6 +10,8 @@ import com.dededev.logistics.database.LogisticRepository
 class ProcessViewModel(application: Application) : ViewModel() {
     private val mRepository = LogisticRepository(application)
 
+    var selectedRegion = "Medan"
+
     private val _processedAlready = MutableLiveData<Boolean>()
     val processedAlready: LiveData<Boolean>
         get() = _processedAlready
@@ -19,6 +21,8 @@ class ProcessViewModel(application: Application) : ViewModel() {
     }
 
     fun getProcessedLogistics() = mRepository.getProcessedLogistics()
+
+    fun getAllLogistics() = mRepository.getAllLogistics()
 
     fun update(logistic: Logistic) {
         mRepository.update(logistic)

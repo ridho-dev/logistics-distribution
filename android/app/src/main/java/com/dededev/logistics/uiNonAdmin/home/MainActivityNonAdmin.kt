@@ -1,9 +1,8 @@
-package com.dededev.logistics.uiNonAdmin
+package com.dededev.logistics.uiNonAdmin.home
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -14,10 +13,8 @@ import com.dededev.logistics.database.Logistic
 import com.dededev.logistics.databinding.ActivityMainNonAdminBinding
 import com.dededev.logistics.uiAdmin.ViewModelFactory
 import com.dededev.logistics.uiAdmin.adapter.NonAdminAdapter
-import com.dededev.logistics.uiAdmin.adapter.ProcessAdapter
 import com.dededev.logistics.uiAdmin.login.LoginActivity
-import com.dededev.logistics.uiAdmin.process.ProcessFragment
-import com.dededev.logistics.uiAdmin.process.ProcessViewModel
+import com.dededev.logistics.uiNonAdmin.settings.SettingsActivity
 import com.dededev.logistics.utils.SessionManager
 
 class MainActivityNonAdmin : AppCompatActivity() {
@@ -122,10 +119,12 @@ class MainActivityNonAdmin : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_logout -> {
-                pref.setLoggedIn(false, "", "")
-                val intent = Intent(this, LoginActivity::class.java)
+            R.id.action_settings -> {
+                val intent = Intent(this@MainActivityNonAdmin, SettingsActivity::class.java)
                 startActivity(intent)
+//                pref.setLoggedIn(false, "", "")
+//                val intent = Intent(this, LoginActivity::class.java)
+//                startActivity(intent)
                 true
             }
             else -> super.onOptionsItemSelected(item)

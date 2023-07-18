@@ -8,7 +8,7 @@ import android.widget.Toast
 import com.dededev.logistics.MainActivity
 import com.dededev.logistics.database.user.User
 import com.dededev.logistics.databinding.ActivityLoginBinding
-import com.dededev.logistics.uiNonAdmin.MainActivityNonAdmin
+import com.dededev.logistics.uiNonAdmin.home.MainActivityNonAdmin
 import com.dededev.logistics.utils.SessionManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -23,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         mAuth = FirebaseAuth.getInstance()
         db = FirebaseFirestore.getInstance()

@@ -1,80 +1,73 @@
-package com.dededev.logistics.uiAdmin.profile
+package com.dededev.logistics.uiNonAdmin.settings
 
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
-import android.view.LayoutInflater
+import android.util.Log
+import android.view.MenuItem
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.dededev.logistics.databinding.FragmentProfileBinding
-import com.dededev.logistics.uiAdmin.ViewModelFactory
+import com.dededev.logistics.R
+import com.dededev.logistics.databinding.ActivitySettingsBinding
 import com.dededev.logistics.uiAdmin.login.LoginActivity
-import com.dededev.logistics.uiAdmin.process.ProcessFragment
-import com.dededev.logistics.uiAdmin.process.ProcessViewModel
 import com.dededev.logistics.utils.SessionManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.apache.poi.ss.usermodel.HorizontalAlignment
-import org.apache.poi.xssf.usermodel.XSSFCellStyle
 import org.apache.poi.xssf.usermodel.XSSFWorkbook
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class ProfileFragment : Fragment() {
+class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySettingsBinding
+    private lateinit var settingsViewModel: SettingsViewModel
 
-    private var _binding: FragmentProfileBinding? = null
     private lateinit var pref: SessionManager
-    private lateinit var profileViewModel: ProfileViewModel
+    private val REQUEST_CODE:Int = 0
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
-    private val binding get() = _binding!!
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-    private var REQUEST_CODE: Int = 0
+        settingsViewModel = SettingsViewModel(application)
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-
-        pref = SessionManager(context!!)
-
-        profileViewModel = obtainViewModel(this@ProfileFragment)
+        pref = SessionManager(this)
 
         binding.btnLogout.setOnClickListener {
             pref.setLoggedIn(false, "", "")
-            val intent = Intent(context, LoginActivity::class.java)
+            val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
         }
 
         binding.btnExport.setOnClickListener {
             lifecycleScope.launch {
                 val date = SimpleDateFormat("dd-MM-yyyy HH-mm-ss", Locale.getDefault()).format(Date())
-                val file = File(Environment.getExternalStorageDirectory(), "/${pref.getJabatan()}$date.xlsx")
+                val file = File(Environment.getExternalStorageDirectory(), "/${pref.getLokasi()}$date.xlsx")
                 export(file)
             }
         }
 
-        binding.profileUserType.text = pref.getJabatan()
         binding.profileUserLocation.text = pref.getLokasi()
+        binding.profileUserType.text = pref.getJabatan()
 
-        return root
     }
 
+    private fun checkPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            // Izin sudah diberikan, lanjutkan tindakan yang membutuhkan izin
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE)
+        }
+    }
     private fun showLoading(state: Boolean) {
         if (state) {
             binding.loadingLayout.visibility = View.VISIBLE
@@ -87,12 +80,6 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // Izin sudah diberikan, lanjutkan tindakan yang membutuhkan izin
-            ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUEST_CODE)
-        }
-    }
 
     private suspend fun export(file: File) {
         checkPermission()
@@ -125,7 +112,8 @@ class ProfileFragment : Fragment() {
                 cell = row.createCell(5)
                 cell.setCellValue("Stok Akhir")
 
-                val list = profileViewModel.getList()
+                val listAll = settingsViewModel.getList()
+                val list = listAll.filter { it.wilayah == pref.getLokasi().toString() }
 
                 for (i in list.indices) {
                     row = sheet.createRow(i+1)
@@ -153,27 +141,17 @@ class ProfileFragment : Fragment() {
                 workbook.write(outputStream)
                 outputStream.close()
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Data berhasil di export!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SettingsActivity, "Data berhasil di export!", Toast.LENGTH_SHORT).show()
                     showLoading(false)
                 }
 
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(), "Export gagal! Eror: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SettingsActivity, "Export gagal! Eror: ${e.message}", Toast.LENGTH_SHORT).show()
                     showLoading(false)
                 }
             }
         }
 
-    }
-
-    private fun obtainViewModel(fragment: ProfileFragment): ProfileViewModel {
-        val factory = ViewModelFactory.getInstance(fragment.requireActivity().application)
-        return ViewModelProvider(fragment, factory)[ProfileViewModel::class.java]
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

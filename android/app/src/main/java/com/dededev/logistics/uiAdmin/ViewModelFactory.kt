@@ -8,7 +8,8 @@ import com.dededev.logistics.uiAdmin.home.HomeViewModel
 import com.dededev.logistics.uiAdmin.home.daerah.HomeDaerahViewModel
 import com.dededev.logistics.uiAdmin.home.pusat.HomePusatViewModel
 import com.dededev.logistics.uiAdmin.profile.ProfileViewModel
-import com.dededev.logistics.uiNonAdmin.NonAdminViewModel
+import com.dededev.logistics.uiNonAdmin.home.NonAdminViewModel
+import com.dededev.logistics.uiNonAdmin.settings.SettingsViewModel
 import java.lang.IllegalArgumentException
 
 class ViewModelFactory private constructor(private val mApplication: Application)
@@ -42,6 +43,8 @@ class ViewModelFactory private constructor(private val mApplication: Application
             return HomeDaerahViewModel(mApplication) as T
         } else if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
             return ProfileViewModel(mApplication) as T
+        } else if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+            return SettingsViewModel(mApplication) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
     }

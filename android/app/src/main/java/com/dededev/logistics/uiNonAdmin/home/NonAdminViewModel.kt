@@ -1,4 +1,4 @@
-package com.dededev.logistics.uiNonAdmin
+package com.dededev.logistics.uiNonAdmin.home
 
 import android.app.Application
 import androidx.lifecycle.LiveData

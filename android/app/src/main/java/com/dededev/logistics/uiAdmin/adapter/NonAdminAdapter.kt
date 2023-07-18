@@ -10,8 +10,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.dededev.logistics.R
 import com.dededev.logistics.database.Logistic
-import com.dededev.logistics.uiNonAdmin.NonAdminViewModel
-import kotlin.math.floor
+import com.dededev.logistics.uiNonAdmin.home.NonAdminViewModel
 
 class NonAdminAdapter(
     private var logisticList: List<Logistic>,

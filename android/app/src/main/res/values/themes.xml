@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.Logistics" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.Logistics" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/main_blue</item>
         <item name="colorPrimaryVariant">@color/main_blue</item>
@@ -46,5 +46,10 @@
         <item name="android:letterSpacing">0.2</item>
         <item name="android:background">@color/bg_blue</item>
         <item name="android:padding">16dp</item>
+    </style>
+
+    <style name="Theme.Logistics.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 </resources>
